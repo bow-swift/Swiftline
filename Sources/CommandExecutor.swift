@@ -3,13 +3,13 @@ import Foundation
 typealias ExecutorReturnValue = (status: Int, standardOutput: String, standardError: String)
 
 enum STDLIB {
-    #if os(Linux)
+    #if os(Linux) || os(Android)
     typealias _posix_spawn_file_actions_t = posix_spawn_file_actions_t
     #else
     typealias _posix_spawn_file_actions_t = posix_spawn_file_actions_t?
     #endif
 
-    #if os(Linux)
+    #if os(Linux) || os(Android)
     static func _make_posix_spawn_file_actions_t() -> _posix_spawn_file_actions_t {
         posix_spawn_file_actions_t()
     }
