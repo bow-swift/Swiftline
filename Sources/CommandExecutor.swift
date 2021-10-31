@@ -130,7 +130,7 @@ class LogTaskExecutor: TaskExecutor {
         var childFDActions = STDLIB._make_posix_spawn_file_actions_t()
         let outputPipe: Int32 = 69
         let outerrPipe: Int32 = 70
-        
+
         defer {
             for case let arg? in argv { free(arg) }
             posix_spawn_file_actions_addclose(&childFDActions, outputPipe)
@@ -144,7 +144,8 @@ class LogTaskExecutor: TaskExecutor {
         posix_spawn_file_actions_adddup2(&childFDActions, outputPipe, 1)
         posix_spawn_file_actions_adddup2(&childFDActions, outerrPipe, 2)
     
-        var result = posix_spawn(&pid, argv[0], &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
+        let argvPointer = UnsafePointer(argv[0])
+        var result = posix_spawn(&pid, argvPointer, &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
         guard result == 0 else { return (Int(result), "", "") }
         waitpid(pid, &result, 0)
     
