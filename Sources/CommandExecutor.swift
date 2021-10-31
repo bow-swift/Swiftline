@@ -144,7 +144,7 @@ class LogTaskExecutor: TaskExecutor {
         posix_spawn_file_actions_adddup2(&childFDActions, outputPipe, 1)
         posix_spawn_file_actions_adddup2(&childFDActions, outerrPipe, 2)
     
-        let argvPointer = UnsafePointer(argv[0])
+        let argvPointer: UnsafePointer<CChar>! = UnsafePointer(argv[0])
         var result = posix_spawn(&pid, argvPointer, &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
         guard result == 0 else { return (Int(result), "", "") }
         waitpid(pid, &result, 0)
