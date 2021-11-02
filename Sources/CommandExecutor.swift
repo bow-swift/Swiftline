@@ -110,7 +110,8 @@ class InteractiveTaskExecutor: TaskExecutor {
         posix_spawn_file_actions_addclose(&childFDActions, outputPipe[1])
 
         var pid: pid_t = 0
-        let result = posix_spawn(&pid, argv[0], &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
+        let argvPointer: UnsafePointer<CChar>! = UnsafePointer(argv[0])
+        let result = posix_spawn(&pid, argvPointer, &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
 
         return (Int(result), "", "")
     }
@@ -144,7 +145,8 @@ class LogTaskExecutor: TaskExecutor {
         posix_spawn_file_actions_adddup2(&childFDActions, outputPipe, 1)
         posix_spawn_file_actions_adddup2(&childFDActions, outerrPipe, 2)
     
-        var result = posix_spawn(&pid, argv[0], &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
+        let argvPointer: UnsafePointer<CChar>! = UnsafePointer(argv[0])
+        var result = posix_spawn(&pid, argvPointer, &childFDActions, nil, argv + [nil], ActualTaskExecutor.environment)
         guard result == 0 else { return (Int(result), "", "") }
         waitpid(pid, &result, 0)
     
